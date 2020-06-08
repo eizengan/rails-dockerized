@@ -1,0 +1,30 @@
+
+version: '3'
+volumes:
+  database:
+  gems:
+  node_modules:
+services:
+  db:
+    image: postgres:alpine
+    env_file: .env
+    ports:
+      - "5433:5432" # don't expose over local postgres
+    volumes:
+      - database:/var/lib/postgresql/data
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        bundler_path: /root/bundler_gems # set default gem install path to volume
+    command: bundle exec rails server -b '0.0.0.0' -p 3000
+    env_file: .env
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/root/application # mounts code as local volume, image won't need rebuilds on code change
+      - gems:/root/bundler_gems # persistent storage for simpler updates
+      - node_modules:/root/application/node_modules/ # persistent storage for simpler updates
+    depends_on:
+      - db

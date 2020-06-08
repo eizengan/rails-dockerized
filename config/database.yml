@@ -17,6 +17,14 @@
 default: &default
   adapter: postgresql
   encoding: unicode
+  host: <%= ENV['DATABASE_URL'] %>
+  # If POSTGRES_PASSWORD is set in the environment then use the default user
+  # and that password to connect. If none is set, then assume that the creds
+  # are elsewhere (e.g. included in DATABASE_URL on Heroku)
+  <% if ENV['POSTGRES_PASSWORD'].present? %>
+  username: postgres
+  password: <%= ENV['POSTGRES_PASSWORD'] %>
+  <% end %>
   # For details on connection pooling, see Rails configuration guide
   # https://guides.rubyonrails.org/configuring.html#database-pooling
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>

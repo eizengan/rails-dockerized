@@ -1,0 +1,5 @@
+# don't copy node_modules - use the ones yarn installed
+node_modules/
+
+# ignore file used to store secrets
+.env
